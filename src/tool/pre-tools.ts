@@ -24,13 +24,12 @@ export function controlarNiveles<Keys extends string>(tabla:Record<Keys>[], colu
     };
 }
 
-
 export type RowGasto={codigo1:string, codigo:string, w:number, repartoNivel:number|null, repartoCodigo:string|null};
 export type RowReparto={codigo:string, wr:number}
 export function repartirPonderaciones(tabla:RowGasto[]):RowReparto[]{
     var resultado:RowReparto[] = [];
-    var montoARepartir = {};
-    var sumaSeleccionada = {};
+    var montoARepartir:{[k in string]: number} = {};
+    var sumaSeleccionada:{[k in string]: number} = {};
     for(var row of tabla){
         if(row.repartoNivel != null){
             montoARepartir[row.codigo1] = (montoARepartir[row.codigo1]??0) + row.w;
