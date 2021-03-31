@@ -23,3 +23,29 @@ export function controlarNiveles<Keys extends string>(tabla:Record<Keys>[], colu
         result:true
     };
 }
+
+
+export type RowGasto={codigo1:string, codigo:string, w:number, repartoNivel:number|null, repartoCodigo:string|null};
+export type RowReparto={codigo:string, wr:number}
+export function repartirPonderaciones(tabla:RowGasto[]):RowReparto[]{
+    var resultado:RowReparto[] = [];
+    var montoARepartir = {};
+    var sumaSeleccionada = {};
+    for(var row of tabla){
+        if(row.repartoNivel != null){
+            montoARepartir[row.codigo1] = (montoARepartir[row.codigo1]??0) + row.w;
+        }else{
+            sumaSeleccionada[row.codigo1] = (sumaSeleccionada[row.codigo1]??0) + row.w
+        }
+    }
+    for(var row of tabla){
+        if(row.repartoNivel == null){
+            var wRepartir = 0
+            if( sumaSeleccionada[row.codigo1] != null){
+                wRepartir = row.w * (montoARepartir[row.codigo1]??0) / sumaSeleccionada[row.codigo1]
+            }
+            resultado.push({codigo:row.codigo, wr:row.w + wRepartir});
+        }
+    }
+    return resultado;
+}

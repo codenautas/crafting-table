@@ -7,7 +7,7 @@
 /* global it */
 
 import {promises as fs} from 'fs';
-import { controlarNiveles } from "../..";
+import { controlarNiveles, repartirPonderaciones } from "../..";
 import { strict as assert } from 'assert';
 
 async function compareFiles(expectedFileName:string, obtainedFileName:string){
@@ -53,5 +53,24 @@ describe('controlarNiveles', function(){
         var {result, error} = controlarNiveles(tablaOk, 'nivel', 'gasto');
         assert.equal(result, false);
         assert.equal(error, "el nivel 3 debía sumar 1234 y suma 1084");
+    });
+});
+
+
+describe('repartirPonderaciones', function(){
+    it('reparto bien simple', async function(){
+        var tabla=[
+            {codigo1:'A01', codigo:'A011111', w:0.5, repartoNivel:null, repartoCodigo:null },
+            {codigo1:'A01', codigo:'A011112', w:0.3, repartoNivel:null, repartoCodigo:null },
+            {codigo1:'A01', codigo:'A011113', w:0.2, repartoNivel:1   , repartoCodigo:'A01'},
+            {codigo1:'A02', codigo:'A022222', w:0.1, repartoNivel:null, repartoCodigo:null }
+        ];
+        var obtenido = repartirPonderaciones(tabla);
+        var esperado = [
+            {codigo:'A011111', wr:0.5 + 0.2 * 0.5 / 0.8},
+            {codigo:'A011112', wr:0.3 + 0.2 * 0.3 / 0.8},
+            {codigo:'A022222', wr:0.1},
+        ];
+        assert.deepEqual(obtenido, esperado)
     });
 });
